@@ -1,0 +1,25 @@
+name: test-ec2 login
+on:
+  push:
+    branches:
+      - main
+
+
+  ssh-into-EC2:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        uses: actions/checkout@v2
+        name: Checkout
+      -
+        name: Pull docker image and run container
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.HOST}}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: 22
+          script: |
+            whoami
+            # docker pull angjason/amongus-devtools:latest
+            # docker run -d --restart always -p 80:3000 angjason/amongus-devtools:latest
