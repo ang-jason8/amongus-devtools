@@ -5,12 +5,33 @@ on:
       - main
 
 jobs:
-  ssh-into-EC2:
+  SSH-into-EC2-instance:
     runs-on: ubuntu-latest
     steps:
       -
         uses: actions/checkout@v2
         name: Checkout
+      -
+        name: script test CMD
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.EC2_HOST}}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          port: 22
+          script: |
+            whoami
+      -
+        name: script run update instance
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.EC2_HOST}}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          port: 22
+          script: |
+
+            sudo yum update -y
       -
         name: Pull docker image and run container CMD
         uses: appleboy/ssh-action@master
@@ -20,7 +41,5 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           port: 22
           script: |
-            whoami
-            sudo yum update -y
             docker pull angjason/amongus-devtools:latest
             docker run -d --restart always -p 80:3000 angjason/amongus-devtools:latest
