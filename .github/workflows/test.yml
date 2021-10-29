@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v2
         name: Checkout
       -
-        name: script CMD whoami
+        name: script CMD whoami and yum update
         uses: appleboy/ssh-action@master
         with:
           host: ${{secrets.EC2_HOST}}
@@ -22,17 +22,39 @@ jobs:
           script: |
             whoami
             sudo yum update -y
-      # -
-      #   name: script run update instance
-      #   uses: appleboy/ssh-action@master
-      #   with:
-      #     host: ${{secrets.EC2_HOST}}
-      #     username: ${{ secrets.EC2_USERNAME }}
-      #     key: ${{ secrets.EC2_KEY }}
-      #     port: 22
-      #     script: |
+      -
+        name: install docker in instance
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.EC2_HOST}}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          port: 22
+          script: |
 
-      #       sudo yum update -y
+            sudo amazon-linux-extras install docker
+      -
+        name: start docker service
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.EC2_HOST}}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          port: 22
+          script: |
+
+            sudo service docker start
+      -
+        name: add ec2-user to docker
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.EC2_HOST}}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          port: 22
+          script: |
+
+            sudo usermod -a -G docker ec2-user
       # -
       #   name: Pull docker image and run container CMD
       #   uses: appleboy/ssh-action@master
