@@ -45,7 +45,7 @@ jobs:
 
             sudo service docker start
       -
-        name: add ec2-user to docker
+        name: add instance user to docker
         uses: appleboy/ssh-action@master
         with:
           host: ${{secrets.EC2_HOST}}
@@ -55,14 +55,14 @@ jobs:
           script: |
 
             sudo usermod -a -G docker ec2-user
-      # -
-      #   name: Pull docker image and run container CMD
-      #   uses: appleboy/ssh-action@master
-      #   with:
-      #     host: ${{secrets.EC2_HOST}}
-      #     username: ${{ secrets.EC2_USERNAME }}
-      #     key: ${{ secrets.EC2_KEY }}
-      #     port: 22
-      #     script: |
-      #       docker pull angjason/amongus-devtools:latest
-      #       docker run -d --restart always -p 80:3000 angjason/amongus-devtools:latest
+      -
+        name: Pull docker image and run container CMD
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.EC2_HOST}}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          port: 22
+          script: |
+            docker pull angjason/amongus-devtools:latest
+            docker run -d --restart always -p 80:3000 angjason/amongus-devtools:latest
