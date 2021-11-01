@@ -145,7 +145,7 @@ jobs:
           echo ${{ steps.docker_build.outputs.digest }}
 
 
-  SSH-into-EC2-instance:
+  SSH-into-EC2-instance-cmd-docker:
     needs: docker-push
     runs-on: ubuntu-latest
     steps:
