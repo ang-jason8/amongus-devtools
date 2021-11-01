@@ -184,7 +184,7 @@ jobs:
           port: 22
           script: |
 
-            sudo service docker start
+            sudo systemctl start docker
       -
         name: add instance user to docker
         uses: appleboy/ssh-action@master
