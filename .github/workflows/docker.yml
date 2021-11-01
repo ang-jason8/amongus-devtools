@@ -143,3 +143,68 @@ jobs:
       - name: Image digest
         run: |
           echo ${{ steps.docker_build.outputs.digest }}
+
+
+  SSH-into-EC2-instance:
+    needs: docker-push
+    runs-on: ubuntu-latest
+    steps:
+      -
+        uses: actions/checkout@v2
+        name: Checkout
+      -
+        name: script CMD whoami and yum update
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.EC2_HOST}}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          port: 22
+          script: |
+            whoami
+            sudo yum update -y
+      -
+        name: install docker in instance
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.EC2_HOST}}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          port: 22
+          script: |
+
+            sudo amazon-linux-extras install docker
+      -
+        name: start docker service
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.EC2_HOST}}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          port: 22
+          script: |
+
+            sudo service docker start
+      -
+        name: add instance user to docker
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.EC2_HOST}}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          port: 22
+          script: |
+
+            sudo usermod -a -G docker ec2-user
+      -
+        name: Pull docker image and run container CMD
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.EC2_HOST}}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_KEY }}
+          port: 22
+          script: |
+            docker pull angjason/amongus-devtools:latest
+            docker run -d --restart always -p 80:3000 angjason/amongus-devtools:latest
+
