@@ -211,6 +211,10 @@ jobs:
           script: |
             docker rm -f $(docker ps -a -q)
 
+
+      # docker container ls | grep angjason/amongus-devtools:latest || docker rm -f $(docker ps -a -q)
+      # docker images -a | grep angjason/amongus-devtools || docker rmi $(docker images -a -q)     
+
       -
         name: Pull docker image and run container CMD
         uses: appleboy/ssh-action@master
